@@ -7,31 +7,86 @@
 // Example: 5! = 5 x 4 x 3 x 2 x 1 = 120
 // factorial(5); // 120
 var factorial = function(n) {
+  if (n < 0) {
+    return null;
+  } else if (n <= 1) {
+    return 1;
+  } else {
+    return n * factorial(n - 1);
+  }
 };
 
 // 2. Compute the sum of an array of integers.
 // sum([1,2,3,4,5,6]); // 21
 var sum = function(array) {
+  if (array.length === 0) {
+    return 0;
+  } else if (array.length === 1) {
+    return array[0];
+  } else if (array.length > 1) {
+    return array[array.length - 1] + sum(array.slice(0, array.length - 1));
+  }
 };
 
 // 3. Sum all numbers in an array containing nested arrays.
 // arraySum([1,[2,3],[[4]],5]); // 15
 var arraySum = function(array) {
-};
+  if (array.length === 0) {
+    return 0;
+  } else if (!Array.isArray(array[0]) && array.length === 1) {
+    return array[0];
+  } else if (Array.isArray(array[0]) && array.length === 1) {
+    return arraySum(array[0]);
+  } else if (array.length > 1) {
+    return arraySum([array[array.length - 1]]) + arraySum(array.slice(0, array.length - 1));
+  }
+}; 
 
 // 4. Check if a number is even.
+// This is one way of making this function work recursively, however the test that
+// requires for the function to be called once is not passed.
 var isEven = function(n) {
+  if (n < 0) {
+    return isEven(Math.abs(n));
+  }
+
+  if (arguments[1] === undefined) {
+    return isEven(Math.floor(n / 2), n / 2);
+  } else if (arguments[1] !== undefined) {
+    return n === arguments[1];
+  }
 };
 
 // 5. Sum all integers below a given integer.
 // sumBelow(10); // 45
 // sumBelow(7); // 21
 var sumBelow = function(n) {
+  if (n === 0) {
+    return 0;
+  } else if (n < 0) {
+    return n + 1 + sumBelow(n + 1);
+  } else if (n > 0) {
+    return n - 1 + sumBelow(n - 1);
+  }
 };
 
 // 6. Get the integers within a range (x, y).
 // range(2,9); // [3,4,5,6,7,8]
-var range = function(x, y) {
+var range = function(x, y) {  
+  if (x > y) {
+    var arr1 = range(y + 1, x + 1).reverse();
+    return arr1;
+
+  } else {
+    var arr2 = [];
+
+    if (x - y === -1) {
+      return arr2;
+    }
+
+    arr2.push(x);
+    return arr2.concat(range(x + 1, y));
+  }
 };
 
 // 7. Compute the exponent of a number.
@@ -40,6 +95,13 @@ var range = function(x, y) {
 // exponent(4,3); // 64
 // https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
 var exponent = function(base, exp) {
+  if (exp === 0) {
+    return 1;
+  } else if (exp <= -1) {
+    return exponent(base, exp + 1) / base;
+  } else if (exp >= 1) {
+    return base * exponent(base, exp - 1);
+  }
 };
 
 // 8. Determine if a number is a power of two.
@@ -47,14 +109,34 @@ var exponent = function(base, exp) {
 // powerOfTwo(16); // true
 // powerOfTwo(10); // false
 var powerOfTwo = function(n) {
+  if (n === 1 || n === 2) {
+    return true;
+  } else if ((n > 1 && n < 2) || n === 0) {
+    return false;
+  } else if (n > 2) {
+    return powerOfTwo(n / 2);
+  }
 };
 
 // 9. Write a function that reverses a string.
 var reverse = function(string) {
+  if (string.length === 1) {
+    return string;
+  } else if (string.length > 0) {
+    return string.charAt(string.length - 1) + reverse(string.substring(0, string.length - 1));
+  }
 };
 
 // 10. Write a function that determines if a string is a palindrome.
 var palindrome = function(string) {
+  string = string.toLowerCase();
+  if (string.charAt(0) !== string.charAt(string.length - 1)) {
+    return false;
+  } else if (string.length === 1 || string.length === 0) {
+    return true;
+  } 
+
+  return true && palindrome(string.substring(1, string.length - 1));
 };
 
 // 11. Write a function that returns the remainder of x divided by y without using the
@@ -63,11 +145,53 @@ var palindrome = function(string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 var modulo = function(x, y) {
+  if (x < 0) {
+    x = absVal(x);
+    y = absVal(y);
+    return -modulo(x, y);
+  } 
+
+  if (y === 0) {
+    return NaN;
+  }
+
+  x = absVal(x);
+  y = absVal(y);
+
+  if (x < y) {
+    return x;
+  } else if (y === x) {
+    return 0;
+  } else if (x - y < y) {
+    return x - y;
+  } else {
+    return modulo(x - y, y);
+  }
+
+  function absVal(n) {
+    return n >= 0 ? n : -n;
+  }
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
 // Math methods.
 var multiply = function(x, y) {
+  if (x < 0) {
+    x = absVal(x);
+    return -multiply(x, y);
+  }
+
+  if (x === 0 || y === 0) {
+    return 0;
+  } else if (x > 1) {
+    return y + multiply(x - 1, y);
+  } else if (x === 1) {
+    return y;
+  }
+
+  function absVal(n) {
+    return n >= 0 ? n : -n;
+  }
 };
 
 // 13. Write a function that divides two numbers without using the / operator or
@@ -81,6 +205,20 @@ var divide = function(x, y) {
 // http://www.cse.wustl.edu/~kjg/cse131/Notes/Recursion/recursion.html
 // https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 var gcd = function(x, y) {
+  if (y < 0 || x < 0) {
+    return null;
+  } else if (y > x) {
+    return gcd(y, x);
+  }
+
+  // Euclidean Algorithm
+  if (x === 0) {
+    return y;
+  } else if (y === 0) {
+    return x;
+  } else {
+    return gcd(y, x % y);
+  }
 };
 
 // 15. Write a function that compares each character of two strings and returns true if
